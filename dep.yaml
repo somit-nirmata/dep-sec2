@@ -5,7 +5,7 @@ metadata:
   name: mysecret
 type: Opaque
 data:
-  USER_NAME: YWRtaW4=
+  USER_NAME: YWRtaW4xMjM0NQo=
   PASSWORD: MWYyZDFlMmU2N2Rm
 ---
 apiVersion: v1
@@ -19,5 +19,14 @@ spec:
       command: [ "/bin/sh", "-c", "env" ]
       envFrom:
       - secretRef:
-          name: mysecret
+          name: mysecret1
   restartPolicy: Never
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret1
+type: Opaque
+data:
+  USER_NAME: YWRtaW4xMjM0NQo=
+  PASSWORD: MWYyZDFlMmU2N2Rm
