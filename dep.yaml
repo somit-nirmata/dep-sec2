@@ -8,26 +8,16 @@ data:
   USER_NAME: YWRtaW4=
   PASSWORD: MWYyZDFlMmU2N2Rm
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
-  name: nginx-deployment
-  labels:
-    app: nginx
+  name: secret-test-pod
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: test-container
-        image: registry.k8s.io/busybox
-        command: [ "/bin/sh", "-c", "env" ]
-        envFrom:
-        - secretRef:
+  containers:
+    - name: test-container
+      image: registry.k8s.io/busybox
+      command: [ "/bin/sh", "-c", "env" ]
+      envFrom:
+      - secretRef:
           name: mysecret
+  restartPolicy: Never
