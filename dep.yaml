@@ -33,7 +33,7 @@ spec:
           value: ""
           valueFrom:
             secretKeyRef:
-              name: "mysecret"
+              name: "mysecret1"
               key: "PASSWORD"
 ---
 apiVersion: v1
