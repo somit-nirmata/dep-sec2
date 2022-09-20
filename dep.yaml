@@ -19,7 +19,7 @@ spec:
       command: [ "/bin/sh", "-c", "env" ]
       envFrom:
       - secretRef:
-          name: mysecret1
+          name: mysecret
   restartPolicy: Never
 ---
 apiVersion: v1
