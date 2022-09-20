@@ -1,197 +1,33 @@
 ---
-kind: "Deployment"
-apiVersion: "apps/v1"
+apiVersion: v1
+kind: Secret
 metadata:
-  annotations: {}
-  name: "aqua-web"
+  name: mysecret
+type: Opaque
+data:
+  USER_NAME: YWRtaW4=
+  PASSWORD: MWYyZDFlMmU2N2Rm
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
   labels:
-    nirmata.io/deployment.name: "aqua-web"
-    app.kubernetes.io/name: "zep-aqua-web"
-    nirmata.io/component: "aqua-web"
+    app: nginx
 spec:
   replicas: 1
-  revisionHistoryLimit: 5
   selector:
     matchLabels:
-      nirmata.io/component: "aqua-web"
-    matchExpressions: []
-  strategy:
-    type: "RollingUpdate"
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      app: nginx
   template:
     metadata:
-      annotations: {}
-      name: "aqua-web"
       labels:
-        app: "aqua-web"
-        nirmata.io/deployment.name: "aqua-web"
-        nirmata.io/application.name: "zep-aqua-web"
-        nirmata.io/component: "aqua-web"
+        app: nginx
     spec:
-      terminationGracePeriodSeconds: 30
-      nodeSelector: {}
-      volumes:
-      - name: "docker-socket-mount"
-        hostPath:
-          path: "/var/run/docker.sock"
       containers:
-      - name: "aqua-web"
-        image: "nginx"
-        command: []
-        args: []
-        ports:
-        - name: "aqua-web"
-          containerPort: 8080
-          protocol: "TCP"
-        - name: "aqua-web-ssl"
-          containerPort: 8443
-          protocol: "TCP"
-        env:
-        - name: "https_proxy"
-          value: "example.net:2011"
-        - name: "http_proxy"
-          value: "example.net:2011"
-        - name: "no_proxy"
-          value: "localhost,127.0.0.0/8,*.example.net,*.example.net,example.net"
-        - name: "SCALOCK_GATEWAY_PUBLIC_IP"
-          value: "aqua-gateway"
-        - name: "SCALOCK_DBUSER"
-          value: "scalock"
-        - name: "SCALOCK_DBPASSWORD"
-          value: ""
-          valueFrom:
-            secretKeyRef:
-              name: "scalock"
-              key: "password"
-        - name: "SCALOCK_DBNAME"
-          value: "scalock"
-        - name: "SCALOCK_DBHOST"
-          value: "sexample.com"
-        - name: "SCALOCK_DBPORT"
-          value: "5432"
-        - name: "SCALOCK_AUDIT_DBUSER"
-          value: "slk_audit"
-        - name: "SCALOCK_AUDIT_DBPASSWORD"
-          value: ""
-          valueFrom:
-            secretKeyRef:
-              name: "slkaudit"
-              key: "password"
-        - name: "SCALOCK_AUDIT_DBNAME"
-          value: "slk_audit"
-        - name: "SCALOCK_AUDIT_DBHOST"
-          value: "sharedpgsql965-usnv-test.cik5zxdbsajo.us-east-1.rds.amazonaws.com"
-        - name: "SCALOCK_AUDIT_DBPORT"
-          value: "5432"
-        - name: "AQUA_GRPC_MODE"
-          value: "1"
-        - name: "SCALOCK_DBSSL"
-          value: "require"
-        - name: "SCALOCK_AUDIT_DBSSL"
-          value: "require"
-        - name: "AQUA_DOCKERLESS_SCANNING"
-          value: "1"
-        volumeMounts:
-        - name: "docker-socket-mount"
-          mountPath: "/var/run/docker.sock"
-      dnsConfig:
-        nameservers: []
-        searches: []
-        options:
-        - name: "ndots"
-          value: "1"
-
----
-apiVersion: "v1"
-kind: "Service"
-metadata:
-  annotations: {}
-  name: "aqua-web"
-  labels:
-    nirmata.io/service.name: "aqua-web"
-    app.kubernetes.io/name: "zep-aqua-web"
-    nirmata.io/component: "aqua-web"
-spec:
-  externalIPs: []
-  loadBalancerSourceRanges: []
-  type: "NodePort"
-  selector:
-    nirmata.io/component: "aqua-web"
-  ports:
-  - name: "aqua-web-ssl"
-    port: 8443
-    protocol: "TCP"
-    targetPort: 8443
-  - name: "aqua-web"
-    port: 8080
-    protocol: "TCP"
-    targetPort: 8080
-
----
-kind: "Secret"
-apiVersion: "v1"
-data:
-  password: "V2VsY29tZTkzNA=="
-type: "Opaque"
-metadata:
-  annotations: {}
-  name: "slkaudit"
-  labels:
-    nirmata.io/secret.name: "slkaudit"
-
----
-apiVersion: "networking.k8s.io/v1beta1"
-kind: "Ingress"
-metadata:
-  annotations:
-    ingress.kubernetes.io/secure-backends: "true"
-    ingress.kubernetes.io/backend-protocol: "grpc"
-  name: "web-frontend"
-  labels:
-    nirmata.io/ingress.name: "web-frontend"
-spec:
-  backend:
-    serviceName: "aqua-web"
-    servicePort: 8080
-  rules:
-  - host: "example.com"
-    http:
-      paths:
-      - path: "/"
-        backend:
-          serviceName: "aqua-web"
-          servicePort: 8443
-  - host: "example.com"
-    http:
-      paths:
-      - path: "/"
-        backend:
-          serviceName: "aqua-web"
-          servicePort: 8443
-  - host: "example.com"
-    http:
-      paths:
-      - path: "/"
-        backend:
-          serviceName: "aqua-web"
-          servicePort: 8443
-  tls:
-  - hosts:
-    - "example.com"
-  - hosts:
-    - "example.com"
-    - "example.com"
-
----
-kind: "Secret"
-apiVersion: "v1"
-data:
-  password: "V2VsY29tZTkzNA=="
-type: "Opaque"
-metadata:
-  annotations: {}
-  name: "scalock"
-  labels:
-    nirmata.io/secret.name: "scalock"
+      - name: test-container
+        image: registry.k8s.io/busybox
+        command: [ "/bin/sh", "-c", "env" ]
+        envFrom:
+        - secretRef:
+          name: mysecret
