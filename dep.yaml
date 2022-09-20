@@ -32,7 +32,6 @@ spec:
     spec:
       terminationGracePeriodSeconds: 30
       nodeSelector: {}
-      serviceAccount: "aqua"
       volumes:
       - name: "docker-socket-mount"
         hostPath:
