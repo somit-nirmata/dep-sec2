@@ -28,9 +28,13 @@ spec:
       - name: test-container
         image: registry.k8s.io/busybox
         command: [ "/bin/sh", "-c", "env" ]
-        envFrom:
-        - secretRef:
-          name: mysecret
+        env:
+        - name: "env-value"
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              name: "mysecret"
+              key: "PASSWORD"
 ---
 apiVersion: v1
 kind: Secret
